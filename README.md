@@ -1,2 +1,8 @@
-# game-of-life
-Multiple implementations of Conway's Game of Life simulation
+# Conway's Game of Life Simulation
+In 1985 I got my very first computer: a VZ-200 with a massive 8kb of RAM. I played a few games on it, messed around with BASIC for a while--and then dove in to teaching myself Assembler with a book-for-kids targeted at the ZX81 Spectrum (both machines shared the Z80A Processor.) The first program I ever wrote from scratch was an implementation of [Conway's Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life), in Z80A Assembly Language, running on the 128x64 graphics mode of that clunky little machine.
+
+Fast forward 34 years, and I found myself wanting a small programming project to brush up on my PHP. I was facing the possibility of a Tech Challenge in an upcoming job application, so I wanted the practice. Google showed me a couple of people suggesting using Conway's Game of Life as a Tech Challenge, and so I decided that I should try my hand at implementing it in PHP--and then translating it to Go while simultaneously learning that language.
+
+Another Google search led me to [KieranP's](https://github.com/KieranP/) [Game-Of-Life-Implementations](https://github.com/KieranP/Game-Of-Life-Implementations) here on GitHub. I have not copied Kieran's code, but I *did* read through it before beginning, and no doubt borrowed a couple of design decisions therefrom. (Timing the calculation and display steps, for instance, and implementing the game grid as a one-dimensional array rather than the more obvious two-dimensional array!) However, I opted to implement a wrapped grid rather than non-wrapped; I also decided to store the dimensions, parameters, rules etc of the simulation in one single INI file which could be read by all versions of the code.
+
+And, of course, I used a 128x64 grid, for old times' sake.
