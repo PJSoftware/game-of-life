@@ -6,12 +6,12 @@ import (
 )
 
 type Timer struct {
-	prevAvg               string
-	stableCount           int
 	msElapsed, totElapsed float64
 	avgElapsed            float64
 	timerStart            time.Time
 	timesCalled           int64
+	prevAvg               string
+	stableCount           int
 }
 
 func (t *Timer) Start() {
