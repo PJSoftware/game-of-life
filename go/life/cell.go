@@ -5,8 +5,8 @@ type Cell struct {
 }
 
 func (c *Cell) Init(state bool) {
-    c.currentState = state
-    c.futureState = c.currentState
+	c.currentState = state
+	c.futureState = c.currentState
 }
 
 func (c *Cell) UpdateState(state bool) {
@@ -14,17 +14,17 @@ func (c *Cell) UpdateState(state bool) {
 }
 
 func (c *Cell) Refresh() {
-    c.currentState = c.futureState
+	c.currentState = c.futureState
 }
 
 func (c *Cell) IsAlive() bool {
-    return c.currentState
+	return c.currentState
 }
 
 func (c *Cell) ToString() string {
-    rv := "."
-    if c.currentState {
-        rv = "O"
-    }
-    return rv
+	rv := "."
+	if c.currentState {
+		rv = "O"
+	}
+	return rv
 }

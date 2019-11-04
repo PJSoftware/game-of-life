@@ -26,10 +26,10 @@ func (w *World) Init(generateWorld bool) {
 	w.grid = make(map[string]*Cell)
 
 	if generateWorld {
-        w.prePopulate()
-    } else {
-        w.preDefined()
-    }
+		w.prePopulate()
+	} else {
+		w.preDefined()
+	}
 }
 
 func (w *World) prePopulate() {
@@ -45,77 +45,77 @@ func (w *World) prePopulate() {
 }
 
 func (w *World) preDefined() {
-    var x, y int
-    for x = 1; x <= w.param.Width; x++ {
-        for y = 1; y <= w.param.Height; y++ {
-            isAlive := false
-            if x == 5 && (y == 4 || y == 5 || y == 6) {
-                isAlive = true
-            }
-            w.addCell(x, y, isAlive)
-        }
-    }
+	var x, y int
+	for x = 1; x <= w.param.Width; x++ {
+		for y = 1; y <= w.param.Height; y++ {
+			isAlive := false
+			if x == 5 && (y == 4 || y == 5 || y == 6) {
+				isAlive = true
+			}
+			w.addCell(x, y, isAlive)
+		}
+	}
 }
 
 func (w *World) addCell(x, y int, isAlive bool) {
 	var cell Cell
 	cell.Init(isAlive)
-    w.grid[w.gridReference(x, y)] = &cell
+	w.grid[w.gridReference(x, y)] = &cell
 }
 
 func (w *World) gridReference(x, y int) string {
-    x = w.wrapCoord(x, 1, w.param.Width, w.param.WrapX)
-    y = w.wrapCoord(y, 1, w.param.Height, w.param.WrapY)
-    return strconv.Itoa(x) + "|" + strconv.Itoa(y)
+	x = w.wrapCoord(x, 1, w.param.Width, w.param.WrapX)
+	y = w.wrapCoord(y, 1, w.param.Height, w.param.WrapY)
+	return strconv.Itoa(x) + "|" + strconv.Itoa(y)
 }
 
 func (w *World) wrapCoord(val, min, max int, wrapEnabled bool) int {
-    if val < min {
-        if wrapEnabled {
-            val = max - val
-        } else {
-            val = min - 1
-        }
-    } else if val > max {
-        if wrapEnabled {
-            val = val - max
-        } else {
-            val = max + 1
-        }
-    }
-    return val
+	if val < min {
+		if wrapEnabled {
+			val = max - val
+		} else {
+			val = min - 1
+		}
+	} else if val > max {
+		if wrapEnabled {
+			val = val - max
+		} else {
+			val = max + 1
+		}
+	}
+	return val
 }
 
 func (w *World) ToString() string {
-    var x, y int
-    output := ""
-    for y = 1; y <= w.param.Height; y++ {
-        for x = 1; x <= w.param.Width; x++ {
-        	cell := w.cellAt(x, y)
-            output += cell.ToString()
-        }
-        output += "\n"
-    }
-    return output
+	var x, y int
+	output := ""
+	for y = 1; y <= w.param.Height; y++ {
+		for x = 1; x <= w.param.Width; x++ {
+			cell := w.cellAt(x, y)
+			output += cell.ToString()
+		}
+		output += "\n"
+	}
+	return output
 }
 
 func (w *World) cellAt(x, y int) *Cell {
-    gridRef := w.gridReference(x, y)
-    if cell, ok := w.grid[gridRef]; ok {
-        return cell
-    } else {
-        return &w.emptyCell
-    }
+	gridRef := w.gridReference(x, y)
+	if cell, ok := w.grid[gridRef]; ok {
+		return cell
+	} else {
+		return &w.emptyCell
+	}
 }
 
 func (w *World) Step() int64 {
-    return w.step
+	return w.step
 }
 
 func (w *World) countNeighbours(x, y int) int {
 	totalNeighbours := 0
 	for _, dir := range neighboursAt {
-		cell := w.cellAt(x + dir[0], y + dir[1])
+		cell := w.cellAt(x+dir[0], y+dir[1])
 		if cell.IsAlive() {
 			totalNeighbours++
 		}

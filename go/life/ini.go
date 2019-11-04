@@ -9,8 +9,8 @@ import (
 )
 
 type INI struct {
-	section map[string]bool
-	value map[string]map[string]string
+	section  map[string]bool
+	value    map[string]map[string]string
 	currSect string
 	fileName string
 }
