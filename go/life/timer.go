@@ -6,11 +6,12 @@ import (
 )
 
 type Timer struct {
+	prevAvg               string
+	stableCount           int
 	msElapsed, totElapsed float64
+	avgElapsed            float64
 	timerStart            time.Time
 	timesCalled           int64
-	lastAvg				  string
-	stableCount			  int
 }
 
 func (t *Timer) Start() {
@@ -20,33 +21,24 @@ func (t *Timer) Start() {
 func (t *Timer) Stop() {
 	timerStop := time.Now()
 
-	t.msElapsed = timerStop.Sub(t.timerStart).Seconds()*1000
+	t.msElapsed = timerStop.Sub(t.timerStart).Seconds() * 1000
 	t.timesCalled++
 	t.totElapsed += t.msElapsed
+
+	t.prevAvg = fmt.Sprintf("%.3f", t.avgElapsed)
+	t.avgElapsed = t.totElapsed / float64(t.timesCalled)
 }
 
 func (t *Timer) Elapsed() string {
-	return fmt.Sprintf("%.3f", float64(t.msElapsed))
+	return fmt.Sprintf("%.3f", t.msElapsed)
 }
 
 func (t *Timer) AverageElapsed() string {
-	avgString := "-----"
-	if t.timesCalled > 0 {
-		avg := t.totElapsed / float64(t.timesCalled)
-		avgString = fmt.Sprintf("%.3f", avg)
-	}
-	if avgString == t.lastAvg {
-		t.stableCount++
-	} else {
-		fmt.Printf("Avg(%s) vs Last(%s) %d\n", avgString, t.lastAvg, t.timesCalled)
-		//t.stableCount = 0
-		t.lastAvg = avgString
-	}
-	return t.lastAvg
+	return fmt.Sprintf("%.3f", t.avgElapsed)
 }
 
 func (t *Timer) TotalElapsed() string {
-	return fmt.Sprintf("%.3f", float64(t.totElapsed))
+	return fmt.Sprintf("%.3f", t.totElapsed)
 }
 
 func (t *Timer) ToString() string {
@@ -54,6 +46,11 @@ func (t *Timer) ToString() string {
 }
 
 func (t *Timer) IsAverageStable() bool {
-	fmt.Printf("%d\n", t.stableCount)
-	return (t.stableCount >= 10)
+	currAvg := fmt.Sprintf("%.3f", t.avgElapsed)
+	if currAvg == t.prevAvg {
+		t.stableCount++
+	} else {
+		t.stableCount = 0
+	}
+	return t.stableCount >= 20
 }
