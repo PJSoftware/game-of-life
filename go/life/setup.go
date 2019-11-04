@@ -11,6 +11,23 @@ func (s *Setup) Init() {
 	s.BirthValues = make(map[string]bool)
 	s.SurviveValues = make(map[string]bool)
 
+	s.setDefaults()
+	var ini INI
+	err := ini.Parse("..\\simulations.ini")
+	if err != nil {
+		s.setDefaults()
+	} else {
+		err := ini.Section("default")
+		if err != nil {
+			s.setDefaults()
+		} else {
+			//res, err := ini.Value("resolution")
+		}
+	}
+
+}
+
+func (s *Setup) setDefaults() {
 	s.Width = 128
 	s.Height = 64
 	s.BirthValues["b3"] = true

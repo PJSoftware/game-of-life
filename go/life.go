@@ -13,7 +13,7 @@ func itLives() {
     fmt.Print(world.ToString())
     displayTimings(cTimer, dTimer, world.Step())
 
-    for {
+    for (world.Step() < 1000 || !cTimer.IsAverageStable()) {
         cTimer.Start()
         world.Calculate()
         cTimer.Stop()
