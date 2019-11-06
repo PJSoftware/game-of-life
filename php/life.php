@@ -2,27 +2,6 @@
 
 error_reporting(E_ALL);
 
-/*
- *  Our main file should:
- *      Read arguments to get our starting point configuration
- *      Read INI file to initialise rules, world size and layout
- *      Initialise world per settings
- *      Populate world randomly or per specified starting layout
- *      Commence looping:
- *          Calculate new world position (with timing)
- *          Display new world position (with timing)
- *          Display timings (current and total)
- */
-
-/*
- *  Required:
- *      World class to handle the World initialisation, calculation, display
- *          Setup class to handle all initial setup
- *          Cell class to handle individual cell operations (??)
- *      Timer class to handle timing calculations etc
- *      MAIN loop (does this need to be a class?)
- */
-
 require_once 'life/world.php';
 require_once 'life/timer.php';
 
@@ -53,7 +32,6 @@ function it_lives()
 function display_timings($step)
 {
     global $c_timer, $d_timer;
-
     echo "#$step | Calc " . $c_timer->to_string()." | Disp ".$d_timer->to_string()."\n";
 }
 
