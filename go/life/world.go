@@ -1,6 +1,7 @@
 package life
 
 import (
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -20,6 +21,7 @@ var neighboursAt = [8][2]int{
 }
 
 func (w *World) Init(board string, rules string, generateRandom bool) {
+	log.Printf("Initialising World on '%s' board with '%s' rules", board, rules)
 	w.emptyCell = Cell{false, false}
 	w.param.Init(board, rules)
 	w.step = 0
@@ -129,12 +131,12 @@ func (w *World) Calculate() {
 			cell := w.cellAt(x, y)
 			nCount := w.countNeighbours(x, y)
 			if cell.IsAlive() {
-				willSurvive := w.param.SurviveValues["s"+strconv.Itoa(nCount)]
+				willSurvive := w.param.RuleValues["s"][strconv.Itoa(nCount)]
 				if !willSurvive {
 					cell.UpdateState(false)
 				}
 			} else {
-				willSpawn := w.param.BirthValues["b"+strconv.Itoa(nCount)]
+				willSpawn := w.param.RuleValues["b"][strconv.Itoa(nCount)]
 				if willSpawn {
 					cell.UpdateState(true)
 				}

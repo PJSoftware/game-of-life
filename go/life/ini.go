@@ -2,8 +2,8 @@ package life
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 )
@@ -11,7 +11,6 @@ import (
 type INI struct {
 	section  map[string]bool
 	value    map[string]map[string]string
-	currSect string
 	fileName string
 }
 
@@ -27,7 +26,7 @@ func (i *INI) Parse(fileName string) error {
 
 	i.fileName = fileName
 	patternSect := `^[[](.+)[]]`
-	patternValue := `^([*=\s]+)\s*=\s*(\S.*)`
+	patternValue := `^(\S+)\s*=\s*(\S.*)$`
 	currSect := ""
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -42,6 +41,8 @@ func (i *INI) Parse(fileName string) error {
 				currSect = reSect.FindStringSubmatch(line)[1]
 				i.section[currSect] = true
 				i.value[currSect] = make(map[string]string)
+			} else {
+				log.Panic("INI: Could not compile regexp to read Section")
 			}
 		} else {
 			isValue, err := regexp.MatchString(patternValue, line)
@@ -54,6 +55,8 @@ func (i *INI) Parse(fileName string) error {
 					key := reVal.FindStringSubmatch(line)[1]
 					value := reVal.FindStringSubmatch(line)[2]
 					i.value[currSect][key] = value
+				} else {
+					log.Panic("INI: Could not compile regexp to read Value")
 				}
 			}
 		}
@@ -68,20 +71,21 @@ func (i *INI) Parse(fileName string) error {
 
 func (i *INI) Section(sectName string) error {
 	if i.section[sectName] {
-		i.currSect = sectName
 		return nil
 	} else {
-		return fmt.Errorf("INI: Section '%s' not found in %s", sectName, i.fileName)
+		return fmt.Errorf("INI: Section '%s' not found in '%s'", sectName, i.fileName)
 	}
 }
 
-func (i *INI) Value(valName string) (string, error) {
-	if i.currSect == "" {
-		return "", errors.New("INI: Must specify a Section() before calling Value()")
+func (i *INI) Value(sectName string, valName string) (string, error) {
+	err := i.Section(sectName)
+	if err != nil {
+		return "", err
 	}
-	if val, ok := i.value[i.currSect][valName]; ok {
+
+	if val, ok := i.value[sectName][valName]; ok {
 		return val, nil
 	} else {
-		return "", fmt.Errorf("INI: Value '%s' not found in section '%s' of %s", valName, i.currSect, i.fileName)
+		return "", fmt.Errorf("INI: Value '%s' not found in section '%s' of '%s'", valName, sectName, i.fileName)
 	}
 }

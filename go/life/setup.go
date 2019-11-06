@@ -1,30 +1,87 @@
 package life
 
+import (
+	"log"
+	"regexp"
+	"strconv"
+	"strings"
+)
+
 type Setup struct {
-	Width, Height              int
-	BirthValues, SurviveValues map[string]bool
-	SpawnPercent               int
-	WrapX, WrapY               bool
+	Width, Height int
+	RuleValues    map[string]map[string]bool
+	SpawnPercent  int
+	WrapX, WrapY  bool
+	ini           INI
 }
 
 func (s *Setup) Init(board string, rules string) {
-	s.BirthValues = make(map[string]bool)
-	s.SurviveValues = make(map[string]bool)
+	s.RuleValues = make(map[string]map[string]bool)
+	s.RuleValues["b"] = make(map[string]bool)
+	s.RuleValues["s"] = make(map[string]bool)
 
 	s.setDefaults()
-	var ini INI
-	err := ini.Parse("../gameoflife.ini")
+	err := s.ini.Parse("../game-of-life.ini")
 	if err != nil {
-		s.setDefaults()
-	} else {
-		err := ini.Section("default")
-		if err != nil {
-			s.setDefaults()
-		} else {
-			//res, err := ini.Value("resolution")
-		}
+		log.Print("world.Init: Error reading INI file: " + err.Error())
+		log.Print("world.Init: using Default parameters instead")
+		return
 	}
 
+	section := "world-" + board
+	err = s.ini.Section(section)
+	if err != nil {
+		log.Printf(err.Error())
+		return
+	}
+
+	s.readResolution(section)
+	s.readWrap(section)
+	s.readSpawn(section)
+	s.readRules(rules)
+}
+
+func (s *Setup) readResolution(sectName string) {
+	val, err := s.ini.Value(sectName, "resolution")
+	if err == nil {
+		s.setResolution(val)
+	} else {
+		log.Print(err.Error())
+		log.Print("Setup: resolution not found, using default")
+	}
+}
+
+func (s *Setup) readWrap(sectName string) {
+	val1, err1 := s.ini.Value(sectName, "wrapx")
+	val2, err2 := s.ini.Value(sectName, "wrapy")
+	if err1 == nil && err2 == nil {
+		s.setWrap(val1 == "yes", val2 == "yes")
+	} else {
+		log.Print("Setup: unable to read wrap values, using defaults")
+	}
+}
+
+func (s *Setup) readSpawn(sectName string) {
+	val, err1 := s.ini.Value(sectName, "spawn_percent")
+	if err1 == nil {
+		percent, err2 := strconv.Atoi(val)
+		if err2 == nil {
+			s.setSpawn(percent)
+		} else {
+			log.Printf("Setup: spawn percentage '%s' not numeric, using default", val)
+		}
+	} else {
+		log.Print("Setup: unable to read spawn percentage, using default")
+	}
+}
+
+func (s *Setup) readRules(valName string) {
+	val, err := s.ini.Value("rules", valName)
+	if err == nil {
+		s.setRules(val)
+	} else {
+		log.Printf("Setup: could not load '%s' rules, using default (classic Conway)", valName)
+	}
 }
 
 func (s *Setup) setDefaults() {
@@ -37,81 +94,44 @@ func (s *Setup) setDefaults() {
 	s.setRules("b3/s23")
 }
 
-func (s *Setup) setResolution(resolution string) {}
-func (s *Setup) setWrap(wrapX, wrapY bool) {}
-func (s *Setup) setSpawn(percentage int) {}
+func (s *Setup) setResolution(resolution string) {
+	reRes, err := regexp.Compile(`^(\d+)x(\d+)$`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	s.Width, err = strconv.Atoi(reRes.FindStringSubmatch(resolution)[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	s.Height, err = strconv.Atoi(reRes.FindStringSubmatch(resolution)[2])
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (s *Setup) setWrap(wrapX, wrapY bool) {
+	s.WrapX = wrapX
+	s.WrapY = wrapY
+}
+
+func (s *Setup) setSpawn(percentage int) {
+	s.SpawnPercent = percentage
+}
+
 func (s *Setup) setRules(simRules string) {
-	s.BirthValues["b3"] = true
-	s.SurviveValues["s2"] = true
-	s.SurviveValues["s3"] = true
+	reRules, err := regexp.Compile(`b(\d*)/s(\d*)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bDigits := reRules.FindStringSubmatch(simRules)[1]
+	sDigits := reRules.FindStringSubmatch(simRules)[2]
+	s.parseRuleDigits("b", bDigits)
+	s.parseRuleDigits("s", sDigits)
 }
 
-/*
-class ErrorProcessingINI extends Exception { }
-
-class Setup
-{
-    public $width;
-    public $height;
-    public $birth_values;
-    public $survive_values;
-    public $spawn_percent;
-    public $wrapx;
-    public $wrapy;
-
-    function __construct($section = "default")
-    {
-        $sim_ini = "..\simulations.ini";
-        if (!file_exists($sim_ini)) {
-            throw new ErrorProcessingINI("File not found: '$sim_ini'");
-        }
-        $ini = parse_ini_file($sim_ini, true);
-
-        if (!array_key_exists($section, $ini)) {
-            throw new ErrorProcessingINI("Section not found: '$section'");
-        }
-        $setup = $ini[$section];
-
-        $keys = array("resolution", "rules", "wrapx", "wrapy", "spawn_percent");    // "grid" not used yet
-        foreach ($keys as $key) {
-            if (!array_key_exists($key, $setup)) {
-                throw new ErrorProcessingINI("Value '$key' not found in $section section");
-            }
-        }
-
-        if (preg_match("/^(\d+)x(\d+)$/",$setup["resolution"],$res)) {
-            $this->width = $res[1];
-            $this->height = $res[2];
-        } else {
-            throw new ErrorProcessingINI("Expected ##x## in 'resolution'");
-        }
-
-        if (preg_match("/^b(\d+)\//",$setup["rules"],$birth)) {
-            foreach (preg_split("//",$birth[1]) as $val) {
-                IF ($val <> "") {
-                    $this->birth_values["b$val"] = 1;
-                }
-            }
-        } else {
-            throw new ErrorProcessingINI("Birth rule not specified; expecting 'b#/...'");
-        }
-        if (preg_match("/\/s(\d+)$/",$setup["rules"],$survive)) {
-            foreach (preg_split("//",$survive[1]) as $val) {
-                if ($val <> "") {
-                    $this->survive_values["s$val"] = 1;
-                }
-            }
-        } else {
-            throw new ErrorProcessingINI("Survival rule not specified; expecting '.../s#'");
-        }
-
-        $this->wrapx = ($setup["wrapx"] === "yes");
-        $this->wrapy = ($setup["wrapy"] === "yes");
-        $this->spawn_percent = intval($setup["spawn_percent"]);
-        if ($this->spawn_percent < 5 || $this->spawn_percent > 95) {
-            throw new ErrorProcessingINI("Expected positive numeric spawn_percent (between 5 and 95)");
-        }
-
-    }
+func (s *Setup) parseRuleDigits(rule string, digits string) {
+	digitSlice := strings.Split(digits, "")
+	for _, digit := range digitSlice {
+		s.RuleValues[rule][digit] = true
+	}
 }
-*/
