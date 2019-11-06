@@ -19,20 +19,20 @@ var neighboursAt = [8][2]int{
 	{-1, -1}, {0, -1}, {1, -1}, // below
 }
 
-func (w *World) Init(generateWorld bool) {
+func (w *World) Init(board string, rules string, generateRandom bool) {
 	w.emptyCell = Cell{false, false}
-	w.param.Init()
+	w.param.Init(board, rules)
 	w.step = 0
 	w.grid = make(map[string]*Cell)
 
-	if generateWorld {
-		w.prePopulate()
+	if generateRandom {
+		w.randomiseWorld()
 	} else {
-		w.preDefined()
+		w.predefinedWorld("../test_world.gol")
 	}
 }
 
-func (w *World) prePopulate() {
+func (w *World) randomiseWorld() {
 	seed := time.Now().UnixNano()
 	rand.Seed(seed)
 	var x, y int
@@ -44,7 +44,7 @@ func (w *World) prePopulate() {
 	}
 }
 
-func (w *World) preDefined() {
+func (w *World) predefinedWorld(fileName string) {
 	var x, y int
 	for x = 1; x <= w.param.Width; x++ {
 		for y = 1; y <= w.param.Height; y++ {

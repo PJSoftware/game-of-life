@@ -5,11 +5,11 @@ import (
 	"fmt"
 )
 
-func itLives() {
+func main() {
 	var cTimer, dTimer life.Timer
 	var world life.World
 
-	world.Init(true)
+	world.Init("default", "conway", true)
 	fmt.Print(world.ToString())
 	displayTimings(cTimer, dTimer, world.Step())
 
@@ -28,8 +28,4 @@ func itLives() {
 
 func displayTimings(cTimer, dTimer life.Timer, step int64) {
 	fmt.Printf("#%d | Calc %s | Disp %s\n", step, cTimer.ToString(), dTimer.ToString())
-}
-
-func main() {
-	itLives()
 }

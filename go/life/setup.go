@@ -7,13 +7,13 @@ type Setup struct {
 	WrapX, WrapY               bool
 }
 
-func (s *Setup) Init() {
+func (s *Setup) Init(board string, rules string) {
 	s.BirthValues = make(map[string]bool)
 	s.SurviveValues = make(map[string]bool)
 
 	s.setDefaults()
 	var ini INI
-	err := ini.Parse("..\\simulations.ini")
+	err := ini.Parse("../gameoflife.ini")
 	if err != nil {
 		s.setDefaults()
 	} else {
@@ -28,14 +28,22 @@ func (s *Setup) Init() {
 }
 
 func (s *Setup) setDefaults() {
-	s.Width = 128
-	s.Height = 64
+	// world configuration "default", AKA my VZ-200 resolution
+	s.setResolution("128x64")
+	s.setWrap(true, true)
+	s.setSpawn(20)
+
+	// default rules, the "Conway" classics
+	s.setRules("b3/s23")
+}
+
+func (s *Setup) setResolution(resolution string) {}
+func (s *Setup) setWrap(wrapX, wrapY bool) {}
+func (s *Setup) setSpawn(percentage int) {}
+func (s *Setup) setRules(simRules string) {
 	s.BirthValues["b3"] = true
 	s.SurviveValues["s2"] = true
 	s.SurviveValues["s3"] = true
-	s.SpawnPercent = 20
-	s.WrapX = true
-	s.WrapY = true
 }
 
 /*
