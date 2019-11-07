@@ -8,12 +8,14 @@ import (
 	"regexp"
 )
 
+// INI object provides interface to an ini file
 type INI struct {
 	section  map[string]bool
 	value    map[string]map[string]string
 	fileName string
 }
 
+// Parse reads an ini file and populates the INI object
 func (i *INI) Parse(fileName string) error {
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -69,23 +71,25 @@ func (i *INI) Parse(fileName string) error {
 	return nil
 }
 
-func (i *INI) Section(sectName string) error {
+// Section determines whether the named section exists in the ini file
+func (i *INI) Section(sectName string) (bool, error) {
 	if i.section[sectName] {
-		return nil
-	} else {
-		return fmt.Errorf("INI: Section '%s' not found in '%s'", sectName, i.fileName)
+		return true, nil
 	}
+
+	return false, fmt.Errorf("INI: Section '%s' not found in '%s'", sectName, i.fileName)
 }
 
+// Value returns value of named key in named section
 func (i *INI) Value(sectName string, valName string) (string, error) {
-	err := i.Section(sectName)
+	_, err := i.Section(sectName)
 	if err != nil {
 		return "", err
 	}
 
 	if val, ok := i.value[sectName][valName]; ok {
 		return val, nil
-	} else {
-		return "", fmt.Errorf("INI: Value '%s' not found in section '%s' of '%s'", valName, sectName, i.fileName)
 	}
+
+	return "", fmt.Errorf("INI: Value '%s' not found in section '%s' of '%s'", valName, sectName, i.fileName)
 }
