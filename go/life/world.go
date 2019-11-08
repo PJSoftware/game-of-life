@@ -7,19 +7,21 @@ import (
 	"time"
 )
 
+// World is our representation of the board or grid of Cells
 type World struct {
 	emptyCell Cell
-	param     Setup
+	param     Param
 	step      int64
 	grid      map[string]*Cell
 }
 
 var neighboursAt = [8][2]int{
 	{-1, 1}, {0, 1}, {1, 1}, // above
-	{-1, 0}, /* self */ {1, 0}, // beside
+	{-1, 0} /* self */, {1, 0}, // beside
 	{-1, -1}, {0, -1}, {1, -1}, // below
 }
 
+// Init initialises the World board or grid
 func (w *World) Init(board string, rules string, generateRandom bool) {
 	log.Printf("Initialising World on '%s' board with '%s' rules", board, rules)
 	w.emptyCell = Cell{false, false}
@@ -88,13 +90,17 @@ func (w *World) wrapCoord(val, min, max int, wrapEnabled bool) int {
 	return val
 }
 
-func (w *World) ToString() string {
+// Render generates a text display of the World state
+func (w *World) Render(htmlise bool) string {
 	var x, y int
 	output := ""
 	for y = 1; y <= w.param.Height; y++ {
 		for x = 1; x <= w.param.Width; x++ {
 			cell := w.cellAt(x, y)
-			output += cell.ToString()
+			output += cell.String() // String() auto-stringification not recognised in '+' concatenation
+		}
+		if htmlise {
+			output += "<br />"
 		}
 		output += "\n"
 	}
@@ -105,11 +111,12 @@ func (w *World) cellAt(x, y int) *Cell {
 	gridRef := w.gridReference(x, y)
 	if cell, ok := w.grid[gridRef]; ok {
 		return cell
-	} else {
-		return &w.emptyCell
 	}
+
+	return &w.emptyCell
 }
 
+// Step returns the count of iterations the World has gone through
 func (w *World) Step() int64 {
 	return w.step
 }
@@ -125,6 +132,7 @@ func (w *World) countNeighbours(x, y int) int {
 	return totalNeighbours
 }
 
+// Calculate performs the next iteration of the simulation across all Cells in the World
 func (w *World) Calculate() {
 	for y := 1; y <= w.param.Height; y++ {
 		for x := 1; x <= w.param.Width; x++ {

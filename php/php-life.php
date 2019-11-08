@@ -32,7 +32,7 @@ function it_lives()
 function display_timings($step)
 {
     global $c_timer, $d_timer;
-    echo "#$step | Calc " . $c_timer->to_string()." | Disp ".$d_timer->to_string()."\n";
+    echo "PHP: #$step | Calc " . $c_timer->to_string()." | Disp ".$d_timer->to_string()."\n";
 }
 
 it_lives();
