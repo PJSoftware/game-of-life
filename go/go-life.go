@@ -42,7 +42,7 @@ func main() {
 
 func displayTimings(cTimer, dTimer life.Timer, step int64, toLog bool) {
 	str := fmt.Sprintf("Calc %s | Disp %s", cTimer.String(), dTimer.String())
-	fmt.Printf("#%d | %s\n", step, str)
+	fmt.Printf("Go: #%d | %s\n", step, str)
 	if toLog {
 		log.Printf("Stable at %d passes: %s", step, str)
 	}
