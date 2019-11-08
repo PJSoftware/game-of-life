@@ -49,8 +49,8 @@ func displayTimings(cTimer, dTimer life.Timer, step int64, toLog bool) {
 }
 
 func animDelay(cTimer, dTimer life.Timer) time.Duration {
-	maxDelay := 50.0 // 20 FPS -> 50 ms per frame
-	minDelay := 10.0 // in case our calcs are too slow
+	const maxDelay = 50.0 // 20 FPS -> 50 ms per frame
+	const minDelay = 10.0 // in case our calcs are too slow
 	loopDuration := cTimer.ElapsedMS() + dTimer.ElapsedMS()
 
 	msDelay := math.Max(maxDelay-loopDuration, minDelay)
