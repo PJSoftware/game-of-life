@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"os"
+	"time"
 
 	"./life"
 )
@@ -33,6 +35,7 @@ func main() {
 		dTimer.Stop()
 
 		displayTimings(cTimer, dTimer, world.Step(), false)
+		time.Sleep(animDelay(cTimer, dTimer))
 	}
 	displayTimings(cTimer, dTimer, world.Step(), true)
 }
@@ -43,4 +46,13 @@ func displayTimings(cTimer, dTimer life.Timer, step int64, toLog bool) {
 	if toLog {
 		log.Printf("Stable at %d passes: %s", step, str)
 	}
+}
+
+func animDelay(cTimer, dTimer life.Timer) time.Duration {
+	maxDelay := 50.0 // 20 FPS -> 50 ms per frame
+	minDelay := 10.0 // in case our calcs are too slow
+	loopDuration := cTimer.ElapsedMS() + dTimer.ElapsedMS()
+
+	msDelay := math.Min(maxDelay-loopDuration, minDelay)
+	return time.Millisecond * time.Duration(msDelay)
 }

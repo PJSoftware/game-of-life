@@ -37,6 +37,11 @@ func (t *Timer) Elapsed() string {
 	return fmt.Sprintf("%.3f", t.msElapsed)
 }
 
+// ElapsedMS returns elapsed milliseconds as a float64
+func (t *Timer) ElapsedMS() float64 {
+	return t.msElapsed
+}
+
 // AverageElapsed returns average duration over all timings
 func (t *Timer) AverageElapsed() string {
 	return fmt.Sprintf("%.3f", t.avgElapsed)
