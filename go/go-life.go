@@ -53,6 +53,6 @@ func animDelay(cTimer, dTimer life.Timer) time.Duration {
 	minDelay := 10.0 // in case our calcs are too slow
 	loopDuration := cTimer.ElapsedMS() + dTimer.ElapsedMS()
 
-	msDelay := math.Min(maxDelay-loopDuration, minDelay)
+	msDelay := math.Max(maxDelay-loopDuration, minDelay)
 	return time.Millisecond * time.Duration(msDelay)
 }
