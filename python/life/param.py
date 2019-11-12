@@ -1,42 +1,29 @@
 class Param:
-    x = 1
+    
+    def __init__(self):
+        self.width = 128
+        self.height = 64
+        self.birthValues = {
+            "b3": 1,
+        }
+        self.surviveValues = {
+            "s2": 1,
+            "s3": 1,
+        }
+        self.spawnPercent = 20
+        self.wrapX = True
+        self.wrapY = True
+
 
 """
 REGEXP patterns edited to prevent python warning!!!
 
 
-<?php
-
-error_reporting(E_ALL);
-
-class ErrorProcessingINI extends Exception { }
-
-class Setup
-{
-    public $width;
-    public $height;
-    public $birth_values;
-    public $survive_values;
-    public $spawn_percent;
-    public $wrapx;
-    public $wrapy;
-
-    function __construct($section = "default", $rules = "conway")
     {
         try {
             $this->parse_ini($section, $rules);
         } catch (ErrorProcessingINI $e) {
             echo "Unable to read ini file: ".$e->getMessage()."\n";
-            $this->width = 40;
-            $this->height = 20;
-            $this->birth_values = array();
-            $this->birth_values["b3"] = 1;
-            $this->survive_values = array();
-            $this->survive_values["s2"] = 1;
-            $this->survive_values["s3"] = 1;
-            $this->spawn_percent = 20;
-            $this->wrapx = true;
-            $this->wrapy = false;
         }
     }
 

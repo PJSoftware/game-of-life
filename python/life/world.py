@@ -1,5 +1,6 @@
 from life import param
 from life import cell
+import random
 
 class World:
     neighboursAt = [
@@ -11,7 +12,7 @@ class World:
     def __init__(self, useTestWorld = False):
         self.EMPTY_CELL = cell.Cell()
         self.step = 0
-        self.grid = list()
+        self.grid = {}
         self.param = param.Param()
         if useTestWorld:
             self._predefined()
@@ -19,15 +20,39 @@ class World:
             self._prepopulate()
 
     def _predefined(self):
+        for x in range(1, self.param.width):
+            for y in range(1, self.param.height):
+                alive = True if x == 5 and (4 <= y <= 6) else False
+                self._addCell(x, y, alive)
+
+    def _prepopulate(self):
+        for x in range(1, self.param.width):
+            for y in range(1, self.param.height):
+                alive = True if random.randint(0, 99) <= self.param.spawnPercent else False
+                self._addCell(x, y, alive)
         
+        
+    def _addCell(self, x, y, alive):
+        self.grid[self._gridReference(x, y)] = cell.Cell(alive)
+
+    def _gridReference(self, x, y):
+        x = self._wrapCoord(x, 1, self.param.width, self.param.wrapX)
+        y = self._wrapCoord(y, 1, self.param.height, self.param.wrapY)
+        return x + "|" + y
     
+    def _wrapCoord(self, val, min, max, wrapEnabled):
+        if val < min:
+            val = max - val if wrapEnabled else min - 1
+        elif val > max:
+            val = val - max if wrapEnabled else max + 1
+        return val
 
-
-
-
+    def calculate(self):
+        return
 
 
 """
+
     public function to_string()
     {
         $output = "";
@@ -84,28 +109,6 @@ class World:
         return $total_neighbours;
     }
 
-    private function prepopulate()
-    {
-        for ($x = 1; $x <= $this->param->width; $x++) {
-            for ($y = 1; $y <= $this->param->height; $y++) {
-                $alive = (rand(1, 100) <= $this->param->spawn_percent);
-                $this->add_cell($x, $y, $alive);
-            }
-        }
-    }
-
-    private function predefined()   // One oscillator to test that we are working
-    {
-        for ($x = 1; $x <= $this->param->width; $x++) {
-            for ($y = 1; $y <= $this->param->height; $y++) {
-                $alive = false;
-                if ($x==5 && ($y == 4 || $y == 5 || $y == 6)) {
-                    $alive = true;
-                }
-                $this->add_cell($x, $y, $alive);
-            }
-        }
-    }
 
     private function cell_at($x, $y)
     {
@@ -116,26 +119,6 @@ class World:
             return $this->EMPTY_CELL;
         }
     }
-
-    private function add_cell($x, $y, $alive)
-    {
-        $this->grid[$this->grid_reference($x, $y)] = new Cell($alive);
-    }
-
-    private function grid_reference($x, $y)
-    {
-        $x = $this->wrap_coord($x, 1, $this->param->width, $this->param->wrapx);
-        $y = $this->wrap_coord($y, 1, $this->param->height, $this->param->wrapy);
-        return "$x|$y";
-    }
-
-    private function wrap_coord($val, $min, $max, $wrap_enabled) {
-        if ($val < $min) {
-            $val = $wrap_enabled ? $max - $val : $min - 1;
-        } elseif ($val > $max) {
-            $val = $wrap_enabled ? $val - $max : $max + 1;
-        }
-        return $val;
     }
 }
 """

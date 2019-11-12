@@ -27,5 +27,5 @@ class Timer:
     def totalElapsed(self):
         return "{:.3f}".format(self.totElapsed)
 
-    def toString(self):
+    def __str__(self):
         return "Loop " + self.elapsed() + "(Avg " + self.averageElapsed() + ")"
