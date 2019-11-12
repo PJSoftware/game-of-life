@@ -9,7 +9,7 @@ def itLives():
     print(myWorld)
     displayTimings(myWorld.step)
 
-    while True:
+    while myWorld.step < 1000 or not cTimer.isAverageStable(20):
         cTimer.start()
         myWorld.calculate()
         cTimer.stop()
