@@ -15,7 +15,7 @@ def itLives():
         cTimer.stop()
 
         dTimer.start()
-        print(myWorld)
+        print(myWorld, end='')
         dTimer.stop()
 
         displayTimings(myWorld.step)
