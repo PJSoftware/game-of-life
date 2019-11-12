@@ -21,6 +21,6 @@ def itLives():
         displayTimings(myWorld.step)
 
 def displayTimings(step):
-    print("Python: #{0} | Calc ".format(step) + str(cTimer) + " | Disp " + str(dTimer))
+    print(f"Python: #{step} | Calc " + str(cTimer) + " | Disp " + str(dTimer))
 
 itLives()

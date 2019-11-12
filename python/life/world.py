@@ -53,10 +53,10 @@ class World:
                 myCell = self._cellAt(x, y)
                 neighbours = self._countNeighbours(x, y)
                 if myCell.isAlive():
-                    if not "s{0}".format(neighbours) in self.param.surviveValues:
+                    if not f"s{neighbours}" in self.param.surviveValues:
                         myCell.updateState(False)
                 else:
-                    if "b{0}".format(neighbours) in self.param.birthValues:
+                    if f"b{neighbours}" in self.param.birthValues:
                         myCell.updateState(True)
 
         for y in range(1, self.param.height):
