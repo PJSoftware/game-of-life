@@ -38,7 +38,7 @@ class World:
     def _gridReference(self, x, y):
         x = self._wrapCoord(x, 1, self.param.width, self.param.wrapX)
         y = self._wrapCoord(y, 1, self.param.height, self.param.wrapY)
-        return x + "|" + y
+        return str(x) + "|" + str(y)
     
     def _wrapCoord(self, val, min, max, wrapEnabled):
         if val < min:
@@ -48,77 +48,38 @@ class World:
         return val
 
     def calculate(self):
-        return
+        for y in range(1, self.param.height):
+            for x in range(1, self.param.width):
+                myCell = self._cellAt(x, y)
+                neighbours = self._countNeighbours(x, y)
+                if myCell.isAlive():
+                    if not "s{0}".format(neighbours) in self.param.surviveValues:
+                        myCell.updateState(False)
+                else:
+                    if "b{0}".format(neighbours) in self.param.birthValues:
+                        myCell.updateState(True)
 
+        for y in range(1, self.param.height):
+            for x in range(1, self.param.width):
+                self._cellAt(x, y).refresh()
 
-"""
+        self.step += 1
 
-    public function to_string()
-    {
-        $output = "";
-        for ($y = 1; $y <= $this->param->height; $y++) {
-            for ($x = 1; $x <= $this->param->width; $x++) {
-                $output .= $this->cell_at($x, $y)->to_string();
-            }
-            $output .= "\n";
-        }
-        return $output;
-    }
+    def _cellAt(self, x, y):
+        gridRef = self._gridReference(x, y)
+        return self.grid[gridRef] if gridRef in self.grid else self.EMPTY_CELL
 
-    public function calculate()
-    {
-        for ($y = 1; $y <= $this->param->height; $y++) {
-            for ($x = 1; $x <= $this->param->width; $x++) {
-                $cell = $this->cell_at($x, $y);
-                $neighbours = $this->count_neighbours($x, $y);
-                if ($cell->is_alive()) {
-                    if (!array_key_exists("s$neighbours",$this->param->survive_values)) {
-                        $cell->update_state(false);
-                    }
+    def _countNeighbours(self, x, y):
+        totalNeighbours = 0
+        for offset in self.neighboursAt:
+            if self._cellAt(x + offset[0], y + offset[1]).isAlive():
+                totalNeighbours += 1
+        return totalNeighbours
 
-                } else {
-                    if (array_key_exists("b$neighbours",$this->param->birth_values)) {
-                        $cell->update_state(true);
-                    }
-                }
-            }
-        }
-
-        for ($x = 1; $x <= $this->param->width; $x++) {
-            for ($y = 1; $y <= $this->param->height; $y++) {
-                $this->cell_at($x, $y)->refresh();
-            }
-        }
-
-        $this->step++;
-    }
-
-    public function step()
-    {
-        return $this->step;
-    }
-
-    private function count_neighbours($x, $y)
-    {
-        $total_neighbours = 0;
-        foreach ($this->neighbours_at as $offset) {
-            if ($this->cell_at($x + $offset[0], $y + $offset[1])->is_alive()) {
-                $total_neighbours++;
-            }
-        }
-        return $total_neighbours;
-    }
-
-
-    private function cell_at($x, $y)
-    {
-        $gridref = $this->grid_reference($x, $y);
-        if (array_key_exists($gridref,$this->grid)) {
-            return $this->grid[$this->grid_reference($x, $y)];
-        } else {
-            return $this->EMPTY_CELL;
-        }
-    }
-    }
-}
-"""
+    def __str__(self):
+        output = ""
+        for y in range(1, self.param.height):
+            for x in range(1, self.param.width):
+                output += str(self._cellAt(x, y))
+            output += "\n"
+        return output
