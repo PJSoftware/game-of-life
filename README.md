@@ -63,18 +63,18 @@ See discussion above under *Logging of average timing*. Note that this will be a
 
 # Feature Tabulation
 
-| Feature | PHP | Go |
-| --- | --- | --- |
-| OOP | Yes | Yes |
-| INI File | Yes | Yes |
-| Text Out | Yes | Yes |
-| Timing | Yes | Yes |
-| Times Logged | No | Yes |
-| Auto Loop Break | No | Yes |
-| Errors Logged | No | Yes |
-| Improved Output | No | No |
-| Colour Output | No | No |
-| Graphical Output | No | No |
+| Feature | PHP | Go | Python |
+| --- | --- | --- | --- |
+| OOP | Yes | Yes | Yes |
+| INI File | Yes | Yes | No |
+| Text Out | Yes | Yes | No |
+| Timing | Yes | Yes | Yes |
+| Times Logged | No | Yes | No |
+| Auto Loop Break | No | Yes | Yes | 
+| Errors Logged | No | Yes | No |
+| Improved Output | No | No | No |
+| Colour Output | No | No | No |
+| Graphical Output | No | No | No |
 
 # Language Speed Comparison
 Not yet implemented.
