@@ -20,14 +20,14 @@ class World:
             self._prepopulate()
 
     def _predefined(self):
-        for x in range(1, self.param.width):
-            for y in range(1, self.param.height):
+        for x in range(1, self.param.width+1):      # range(1,j) steps from i to j-1
+            for y in range(1, self.param.height+1):
                 alive = True if x == 5 and (4 <= y <= 6) else False
                 self._addCell(x, y, alive)
 
     def _prepopulate(self):
-        for x in range(1, self.param.width):
-            for y in range(1, self.param.height):
+        for x in range(1, self.param.width+1):
+            for y in range(1, self.param.height+1):
                 alive = True if random.randint(0, 99) <= self.param.spawnPercent else False
                 self._addCell(x, y, alive)
         
@@ -48,8 +48,8 @@ class World:
         return val
 
     def calculate(self):
-        for y in range(1, self.param.height):
-            for x in range(1, self.param.width):
+        for y in range(1, self.param.height+1):
+            for x in range(1, self.param.width+1):
                 myCell = self._cellAt(x, y)
                 neighbours = self._countNeighbours(x, y)
                 if myCell.isAlive():
@@ -59,8 +59,8 @@ class World:
                     if f"b{neighbours}" in self.param.birthValues:
                         myCell.updateState(True)
 
-        for y in range(1, self.param.height):
-            for x in range(1, self.param.width):
+        for y in range(1, self.param.height+1):
+            for x in range(1, self.param.width+1):
                 self._cellAt(x, y).refresh()
 
         self.step += 1
@@ -78,8 +78,8 @@ class World:
 
     def __str__(self):
         output = ""
-        for y in range(1, self.param.height):
-            for x in range(1, self.param.width):
+        for y in range(1, self.param.height+1):
+            for x in range(1, self.param.width+1):
                 output += str(self._cellAt(x, y))
             output += "\n"
         return output
